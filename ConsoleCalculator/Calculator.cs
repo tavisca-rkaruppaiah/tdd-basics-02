@@ -4,6 +4,7 @@ namespace ConsoleCalculator
 {
     public class Calculator
     {
+        
         static string userPressedKey = "0";
         static string firstPart = "";
         static char operand;
