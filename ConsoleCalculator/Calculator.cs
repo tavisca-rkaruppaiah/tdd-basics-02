@@ -5,11 +5,11 @@ namespace ConsoleCalculator
     public class Calculator
     {
         
-        static string userPressedKey = "0";
-        static string firstPart = "";
-        static char operand;
-        static string result;
-        static bool mAddition = false, mSubtraction = false, mMultiplication = false, mDivision = false;
+       string userPressedKey = "";
+        string firstPart = "";
+        char operand;
+        string result;
+        bool mAddition = false, mSubtraction = false, mMultiplication = false, mDivision = false;
         public string SendKeyPress(char key)
         {
 
@@ -22,11 +22,12 @@ namespace ConsoleCalculator
                 switch (key)
                 {
                     case 'C':
-                        ClearCalculator();
-                        break;
+                        return ClearCalculator();
+
                     case 'S':
                         userPressedKey = ChangeSign(userPressedKey);
                         break;
+
                     case 'X':
                         if (mDivision == false)
                         {
@@ -36,8 +37,11 @@ namespace ConsoleCalculator
                         }
                         else
                         {
-                            return PerformOperationManyTimes(key);
+                            result = PerformOperations(result, userPressedKey, '*');
+                            operand = '*';
+                            return result;
                         }
+
                 }
             }
             if (char.IsDigit(key))
@@ -71,22 +75,31 @@ namespace ConsoleCalculator
                             result = SetVariableValues(userPressedKey, key);
                             mAddition = true;
                             return result;
+
                         }
                         else
                         {
-                            return PerformOperationManyTimes(key);
+                            result = PerformOperations(result, userPressedKey, key);
+                            operand = key;
+                            return result;
+
                         }
+
                     case '-':
                         if (mSubtraction == false)
                         {
                             result = SetVariableValues(userPressedKey, key);
                             mSubtraction = true;
                             return result;
+
                         }
                         else
                         {
-                            return PerformOperationManyTimes(key);
+                            result = PerformOperations(result, userPressedKey, key);
+                            operand = key;
+                            return result;
                         }
+
 
                     case '/':
                         if (mDivision == false)
@@ -94,14 +107,18 @@ namespace ConsoleCalculator
                             result = SetVariableValues(userPressedKey, key);
                             mDivision = true;
                             return result;
+
                         }
                         else
                         {
-                            return PerformOperationManyTimes(key);
+                            result = PerformOperations(result, userPressedKey, key);
+                            operand = key;
+                            return result;
+
                         }
+
                     case '=':
                         result = PerformOperations(result, userPressedKey, operand);
-                        userPressedKey = "0";
                         return result;
 
 
@@ -112,64 +129,42 @@ namespace ConsoleCalculator
                 }
             }
 
-            if(userPressedKey.Length >= 2)
-            {
-                if(userPressedKey.StartsWith("0"))
-                {
-                    userPressedKey = userPressedKey.Remove(0, 1);
-                }
-            }
-
 
             return userPressedKey;
         }
 
-       
 
-        public static string SetVariableValues(string firstNumber, char operationSymbol)
+
+        public string SetVariableValues(string firstNumber, char operationSymbol)
         {
             if (CheckStringIsNullOrNot(firstNumber))
             {
 
                 firstPart = firstNumber;
                 operand = operationSymbol;
-                userPressedKey = "0";
+                userPressedKey = "";
                 return firstNumber;
             }
 
             return firstNumber;
         }
 
-        public static string PerformOperationManyTimes(char key)
-        {
-            result = PerformOperations(result, userPressedKey, key);
-            userPressedKey = "0";
-            operand = key;
-            return result;
-
-        }
-
-        public static string CheckRepeationZero(string expression, char key)
+        public string CheckRepeationZero(string expression, char key)
         {
 
-            if (CheckStringIsNullOrNot(userPressedKey))
+            if (userPressedKey.Equals("0"))
             {
-                if (userPressedKey.Equals("0"))
-                {
-                    return userPressedKey;
-                }
+                return userPressedKey;
+            }
 
-                else
-                {
-                    userPressedKey += key;
-                }
-
-
+            else
+            {
+                userPressedKey += key;
             }
             return userPressedKey;
         }
 
-        public static string CheckRepeationDot(string expression, char key)
+        public string CheckRepeationDot(string expression, char key)
         {
 
             if (CheckStringIsNullOrNot(expression))
@@ -186,22 +181,24 @@ namespace ConsoleCalculator
             }
             else
             {
-                expression = "0";
+                expression = "";
             }
             return expression;
         }
-        public static void ClearCalculator()
+        public string ClearCalculator()
         {
-            userPressedKey = "0";
+            userPressedKey = "";
             operand = char.MinValue;
             firstPart = null;
             result = null;
             mAddition = mSubtraction = mMultiplication = mDivision = false;
 
+            return "0";
+
 
         }
 
-        public static bool CheckStringIsNullOrNot(string expression)
+        public bool CheckStringIsNullOrNot(string expression)
         {
             if (expression.Length == 0)
             {
@@ -211,7 +208,7 @@ namespace ConsoleCalculator
             return true;
         }
 
-        public static string ChangeSign(string expression)
+        public string ChangeSign(string expression)
         {
             double signNumber = 0.0;
             if (CheckStringIsNullOrNot(expression))
@@ -224,8 +221,9 @@ namespace ConsoleCalculator
             return signNumber.ToString();
         }
 
-        public static string PerformOperations(string numberOne, string numberTwo, char operandSymbol)
+        public string PerformOperations(string numberOne, string numberTwo, char operandSymbol)
         {
+            userPressedKey = "";
             double number1, number2, result = 0.0;
             double.TryParse(numberOne, out number1);
             double.TryParse(numberTwo, out number2);
@@ -245,6 +243,7 @@ namespace ConsoleCalculator
                     }
                     else
                     {
+                        ClearCalculator();
                         return "-E-";
                     }
                     break;
@@ -253,8 +252,8 @@ namespace ConsoleCalculator
                     break;
             }
 
+
             return result.ToString();
         }
-
     }
 }
