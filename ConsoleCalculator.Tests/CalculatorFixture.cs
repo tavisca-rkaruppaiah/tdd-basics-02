@@ -5,53 +5,71 @@ namespace ConsoleCalculator.Tests
 {
     public class CalculatorFixture
     {
-        [Fact]
-        public void TestCaseOne()
+        Calculator calculator;
+
+        public CalculatorFixture()
         {
-            string pressedKeys = "0";
+            calculator = new Calculator();
+        }
+
+
+        [Fact]
+        public void Single_KeyPress_With_Value_0_Should_Return_0()
+        {
+            string pressedKeys = "c0";
             Assert.Equal("0", OriginalResult(pressedKeys));
         }
 
         [Fact]
-        public void TestCaseTwo()
+        public void Multiple_KeyPress_With_Value_123_Should_Return_123()
         {
-            string pressedKeys = "000";
-            Assert.Equal("0", OriginalResult(pressedKeys));
+            string pressedKeys = "c123";
+            Assert.Equal("123", OriginalResult(pressedKeys));
         }
 
         [Fact]
-        public void TestCaseThree()
+        public void Multiple_KeyPress_With_Value_000_Should_Return_0()
+        {
+            string pressedKeys = "c0000";
+            Assert.Equal("0", OriginalResult(pressedKeys));
+        }
+
+
+        [Fact]
+        public void Error_Calculator_Should_Return_E()
         {
             string pressedKeys = "c10/0=";
             Assert.Equal("-E-", OriginalResult(pressedKeys));
         }
 
         [Fact]
-        public void TestCaseFour()
+        public void PerformAdditionOperation()
         {
-            string pressedKeys = "c3+4";
-            Assert.Equal("4", OriginalResult(pressedKeys));
-        }
-
-
-        [Fact]
-        public void TestCaseFive()
-        {
-            string pressedKeys = "c3..5+4..5=";
-            Assert.Equal("8", OriginalResult(pressedKeys));
-        }
-
-        [Fact]
-        public void TestCaseSix()
-        {
-            string pressedKeys = "c3..5+4..5+2+1..5+0.5=";
+            string pressedKeys = "c10+2=";
             Assert.Equal("12", OriginalResult(pressedKeys));
         }
 
+
         [Fact]
-        public void TestCaseSeven()
+        public void PerformDecimalAdditionOperation()
         {
-            string pressedKeys = "3..5+4.c";
+            string pressedKeys = "c1..1+2..1=";
+            Assert.Equal("3.2", OriginalResult(pressedKeys));
+        }
+
+        
+
+        [Fact]
+        public void PerformSignChangeOperation()
+        {
+            string pressedKeys = "c1s";
+            Assert.Equal("-1", OriginalResult(pressedKeys));
+        }
+
+        [Fact]
+        public void PerformClearCalculator_ShouldReturnWith_0()
+        {
+            string pressedKeys = "c1+2+3c";
             Assert.Equal("0", OriginalResult(pressedKeys));
         }
 
@@ -59,11 +77,10 @@ namespace ConsoleCalculator.Tests
 
 
 
-
         private string OriginalResult(string expression)
-        {
-            Calculator calculator = new Calculator();
+        {   
             string result = null;
+
             foreach (char keys in expression)
             {
                 result = calculator.SendKeyPress(keys);
